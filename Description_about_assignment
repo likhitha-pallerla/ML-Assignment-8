@@ -1,0 +1,91 @@
+1 ) Exploratory Data Analysis
+  1.1)  Importing Various Modules
+  
+  1.2 ) Reading the data from a CSV file
+  
+  1.3 ) Missing Values Treatment
+  
+  1.4 ) The Features and the 'Target'
+  
+       - In all we have 34 features consisting of both the categorical as well as the numerical features. The target variable is the 'Attrition' of the employee which can be either a Yes or a No.
+       - Hence this is a Binary Classification problem.
+        
+  1.5 ) Univariate Analysis
+  
+       - In this section I have done the univariate analysis i.e. I have analysed the range or distribution of the values that various features take. To better analyze the results I have plotted various graphs and visualizations wherever necessary.
+
+2 ) Corelation b/w Features       
+      #corelation matrix
+      
+BREAKING IT DOWN
+-Firstly calling .corr() method on a pandas data frame returns a corelation data frame containing the corelation values b/w the various attributes. now we obtain a numpy array from the corelation data frame using the np.array method. nextly using the np.tril_indices.from() method we set the values of the lower half of the mask numpy array to False. this is bcoz on passing the mask to heatmap function of the seaborn it plots only those squares whose mask is False. therefore if we don't do this then as the mask is by default True then no square will appear. Hence in a nutshell we obtain a numpy array from the corelation data frame and set the lower values to False so that we can visualise the corelation. In order for a full square just use the [:] operator in mask in place of tril_ind... function. in next step we get the refernce to the current figure using the gcf() function of the matplotlib library and set the figure size. in last step we finally pass the necessary parameters to the heatmap function.
+DATA=the corelation data frame containing the 'CORELATION' values.
+MASK= explained earlier.
+vmin,vmax= range of values on side bar
+SQUARE= to show each individual unit as a square.
+ANNOT- whether to dispaly values on top of square or not. In order to dispaly pass it either True or the cor_mat.
+CBAR= whether to view the side bar or not.
+
+SOME INFERENCES FROM THE ABOVE HEATMAP
+Self relation ie of a feature to itself is equal to 1 as expected.
+JobLevel is highly related to Age as expected as aged employees will generally tend to occupy higher positions in the company.
+MonthlyIncome is very strongly related to joblevel as expected as senior employees will definately earn more.
+PerformanceRating is highly related to PercentSalaryHike which is quite obvious.
+Also note that TotalWorkingYears is highly related to JobLevel which is expected as senior employees must have worked for a larger span of time.
+YearsWithCurrManager is highly related to YearsAtCompany.
+YearsAtCompany is related to YearsInCurrentRole.
+
+3 ) Feature Selection
+     3.1 ) Plotting the Features against the 'Target' variable.
+           3.1.1 ) Age
+           3.1.2 ) Department
+           3.1.3 ) Gender
+           3.1.4 ) Job Level
+           3.1.5 ) Monthly Income
+           3.1.6 ) Job Satisfaction
+           3.1.7 ) Environment Satisfaction
+           3.1.8 ) Job Involvement
+           3.1.9 ) Work Life Balance
+           3.1.10 ) RelationshipSatisfaction
+           
+     3.2 ) Feature Selection 
+           --The feature Selection is one of the main steps of the preprocessing phase as the features which we choose directly effects the model performance. While some of the features seem to be less useful in terms of the context; others seem to equally useful. The better features we use the better our model will perform.
+           --We can also use the Recusrive Feature Elimination technique (a wrapper method) to choose the desired number of most important features. The Recursive Feature Elimination (or RFE) works by recursively removing attributes and building a model on those attributes that remain.
+           --It uses the model accuracy to identify which attributes (and combination of attributes) contribute the most to predicting the target attribute.
+           --We can use it directly from the scikit library by importing the RFE module or function provided by the scikit. But note that since it tries different combinations or the subset of features;it is quite computationally expensive.
+          
+4 ) Preparing Dataset           
+    --Before feeding our data into a ML model we first need to prepare the data. This includes encoding all the categorical features (either LabelEncoding or the OneHotEncoding) as the model expects the features to be in numerical form. Also for better performance we will do the feature scaling ie bringing all the features onto the same scale by using the StandardScaler provided in the scikit library.       
+     
+     4.1 ) Feature Encoding
+     4.2 ) Feature Scaling.
+     4.3 ) Splitting the data into training and validation sets
+     
+5 ) Modelling
+    5.1 ) Handling the Imbalanced dataset
+         --Note that we have a imbalanced dataset with majority of observations being of one type ('NO') in our case. In this dataset for example we have about 84 % of observations having 'No' and only 16 % of 'Yes' and hence this is an imbalanced dataset.
+         --To deal with such a imbalanced dataset we have to take certain measures, otherwise the performance of our model can be significantly affected. In this section I have discussed two approaches to curb such datasets.
+        
+        5.1.1 ) Oversampling the Minority or Undersampling the Majority Class   
+          --In an imbalanced dataset the main problem is that the data is highly skewed ie the number of observations of certain class is more than that of the other. Therefore what we do in this approach is to either increase the number of observations corressponding to the minority class (oversampling) or decrease the number of observations for the majority class (undersampling).
+          --Note that in our case the number of observations is already pretty low and so oversampling will be more appropriate.
+          --Below I have used an oversampling technique known as the SMOTE(Synthetic Minority Oversampling Technique) which randomly creates some 'Synthetic' instances of the minority class so that the net observations of both the class get balanced out.
+          --One thing more to take of is to use the SMOTE before the cross validation step; just to ensure that our model does not overfit the data; just as in the case of feature selection.
+
+        5.1.2 ) Using the Right Evaluation Metric
+        
+          --Another important point while dealing with the imbalanced classes is the choice of right evaluation metrics.
+          --Note that accuracy is not a good choice. This is because since the data is skewed even an algorithm classifying the target as that belonging to the majority class at all times will achieve a very high accuracy. For eg if we have 20 observations of one type 980 of another ; a classifier predicting the majority class at all times will also attain a accuracy of 98 % but doesnt convey any useful information.
+          --Hence in these type of cases we may use other metrics such as -->
+          --'Precision'-- (true positives)/(true positives+false positives)
+          --'Recall'-- (true positives)/(true positives+false negatives)
+          --'F1 Score'-- The harmonic mean of 'precision' and 'recall'
+          --'AUC ROC'--> ROC curve is a plot between 'senstivity' (Recall) and '1-specificity' (Specificity=Precision)
+          --'Confusion Matrix'--> Plot the entire confusion matrix
+          
+     5.2 ) Building A Model & Making Predictions
+          --In this section I have used different models from the scikit library and trained them on the previously oversampled data and then used them for the prediction purposes.
+     
+     5.3 ) Comparing Different Models
+     
+Result in .ipynb file denotes the above data frame and the visualizations summarize the resuts after training different models on the given dataset.
